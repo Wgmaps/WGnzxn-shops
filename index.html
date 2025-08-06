@@ -106,15 +106,59 @@ h1 {
   top: 42px; /* IG 往下移，避免擋到 h1 */
 }
 .search-box {
-  top: 85px; /* 搜尋欄跟著往下移 */
+  top: 112px; /* 搜尋欄跟著往下移 */
+}
+
+.line-box {
+  position: absolute;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 4px 12px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-size: 13px;
+  z-index: 997;
+}
+.line-box a {
+  text-decoration: none;
+  color: #00b900;
+  font-weight: bold;
+}
+
+.ig-box, .line-box {
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
+  display: block;
+  width: fit-content;
+  margin: 6px auto;
+  background: white;
+  padding: 6px 16px;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-size: 14px;
+}
+.ig-box a, .line-box a {
+  text-decoration: none;
+  font-weight: bold;
+}
+.ig-box a { color: #d6336c; }
+.line-box a { color: #00b900; }
+
+/* 搜尋欄整體下移 */
+.search-box {
+  top: 148px;
 }
 </style>
 </head>
-<body><h1>WG 興楠店特約商家優惠地圖✨</h1>
-<div id="map"></div>
-<div class="search-box">
+<body><h1>WG 興楠店特約商家優惠地圖✨</h1><div class="ig-box"><a href="https://www.instagram.com/worldgym_nzxn?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" target="_blank">📸 追蹤我們 IG：@worldgym_nzxn</a></div><div class="line-box"><a href="https://lin.ee/ZLH7DRI" target="_blank">💬 加入我們 LINE 官方帳號</a></div><div class="search-box">
 <input id="shopSearch" placeholder="🔍 搜尋商家名稱…" type="text"/>
-</div><div class="ig-box"><a href="https://www.instagram.com/worldgym_nzxn?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" target="_blank">📸 追蹤我們 IG：@worldgym_nzxn</a></div>
+</div>
+<div id="map"></div>
+
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 <script>
 const cuteIcon = L.icon({
