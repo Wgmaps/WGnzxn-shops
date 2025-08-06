@@ -26,6 +26,8 @@
       attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
+    const layer_吃_eat = L.layerGroup();const layer_喝drink = L.layerGroup();const layer_樂fun = L.layerGroup();const layer_用use = L.layerGroup();const layer_身med = L.layerGroup();
+
     const shopsData = {
   "type": "FeatureCollection",
   "features": [
@@ -767,22 +769,58 @@
   ]
 };
 
-    const shopLayer = L.layerGroup().addTo(map);
-
     shopsData.features.forEach(feature => {
       const coords = feature.geometry.coordinates;
       const props = feature.properties;
 
       const popupHtml = `
         <div style='font-weight:bold; font-size:14px;'>${props.name}</div>
-        <div style='font-size:12px; color:gray; white-space:pre-line;'>${props.emoji} ${props.note}</div>
+        <div style='font-size:12px; color:gray; white-space:pre-line;'>${props.note}</div>
       `;
 
-      const marker = L.marker([coords[1], coords[0]]).bindPopup(popupHtml);
-      shopLayer.addLayer(marker);
+      
+      if (props.emoji === '吃 🍽️') {
+        L.marker([coords[1], coords[0]])
+          .bindPopup(popupHtml)
+          .addTo(layer_吃_eat);
+      }
+    
+      if (props.emoji === '喝🥤') {
+        L.marker([coords[1], coords[0]])
+          .bindPopup(popupHtml)
+          .addTo(layer_喝drink);
+      }
+    
+      if (props.emoji === '樂😍') {
+        L.marker([coords[1], coords[0]])
+          .bindPopup(popupHtml)
+          .addTo(layer_樂fun);
+      }
+    
+      if (props.emoji === '用🏍️') {
+        L.marker([coords[1], coords[0]])
+          .bindPopup(popupHtml)
+          .addTo(layer_用use);
+      }
+    
+      if (props.emoji === '身🏥') {
+        L.marker([coords[1], coords[0]])
+          .bindPopup(popupHtml)
+          .addTo(layer_身med);
+      }
+    
     });
 
-    // 加入搜尋功能
+    const layersControl = L.control.layers(null, {
+      '吃 🍽️': layer_吃_eat,'喝🥤': layer_喝drink,'樂😍': layer_樂fun,'用🏍️': layer_用use,'身🏥': layer_身med
+    }).addTo(map);
+
+    layer_吃_eat.addTo(map);
+layer_喝drink.addTo(map);
+layer_樂fun.addTo(map);
+layer_用use.addTo(map);
+layer_身med.addTo(map);
+
     L.Control.geocoder({
       defaultMarkGeocode: false,
       placeholder: '搜尋地址或地點…',
