@@ -177,7 +177,7 @@ const cuteIcon = L.icon({
 
     const layer_吃_eat = L.layerGroup();const layer_喝drink = L.layerGroup();const layer_樂fun = L.layerGroup();const layer_用use = L.layerGroup();const layer_身med = L.layerGroup();
     
-fetch('shops.json?v=' + new Date().getTime())
+fetch('shops/shops.json?v=' + new Date().getTime())
   .then(res => res.json())
   .then(shopsData => {
     shopsData.features.forEach(feature => {
@@ -211,7 +211,7 @@ layer_身med.addTo(map);
     // 模糊搜尋功能
     // 自動從 shops.json 建構 shopNameDict
     const shopNameDict = {};
-    fetch('shops.json?v=' + new Date().getTime())
+    fetch('shops/shops.json?v=' + new Date().getTime())
       .then(response => response.json())
       .then(data => {
         data.features.forEach(feature => {
