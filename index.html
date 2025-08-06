@@ -153,13 +153,7 @@ h1 {
   top: 148px;
 }
 </style>
-<style>
-      #map {
-        height: 80vh;
-        width: 100%;
-      }
-    </style>
-    </head>
+</head>
 <body><h1>WG 興楠店特約商家優惠地圖✨</h1><div class="ig-box"><a href="https://www.instagram.com/worldgym_nzxn?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw==" target="_blank">📸 追蹤我們 IG：@worldgym_nzxn</a></div><div class="line-box"><a href="https://lin.ee/ZLH7DRI" target="_blank">💬 加入我們 LINE 官方帳號</a></div><div class="search-box">
 <input id="shopSearch" placeholder="🔍 搜尋商家名稱…" type="text"/>
 </div>
@@ -176,22 +170,6 @@ const cuteIcon = L.icon({
 
     const map = L.map('map').setView([22.73, 120.33], 14);
 
-const layer_吃_eat = L.layerGroup().addTo(map);
-const layer_喝drink = L.layerGroup().addTo(map);
-const layer_樂fun = L.layerGroup().addTo(map);
-const layer_用use = L.layerGroup().addTo(map);
-const layer_身med = L.layerGroup().addTo(map);
-
-
-const layerMap = {
-  '吃 🍽️': layer_吃_eat,
-  '喝🥤': layer_喝drink,
-  '樂😍': layer_樂fun,
-  '用🏍️': layer_用use,
-  '身🏥': layer_身med
-};
-
-
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap'
@@ -199,7 +177,7 @@ const layerMap = {
 
     const layer_吃_eat = L.layerGroup();const layer_喝drink = L.layerGroup();const layer_樂fun = L.layerGroup();const layer_用use = L.layerGroup();const layer_身med = L.layerGroup();
     
-fetch('shops.json')
+fetch('shops.json?v=' + new Date().getTime())
   .then(res => res.json())
   .then(shopsData => {
     shopsData.features.forEach(feature => {
@@ -233,7 +211,7 @@ layer_身med.addTo(map);
     // 模糊搜尋功能
     // 自動從 shops.json 建構 shopNameDict
     const shopNameDict = {};
-    fetch('shops.json')
+    fetch('shops.json?v=' + new Date().getTime())
       .then(response => response.json())
       .then(data => {
         data.features.forEach(feature => {
