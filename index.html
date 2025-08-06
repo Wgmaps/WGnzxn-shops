@@ -1,24 +1,88 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>特約商家地圖</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-  <style>
+<meta charset="utf-8"/>
+<title>特約商家地圖</title>
+<meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport"/>
+<link href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" rel="stylesheet"/>
+<style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: "Helvetica Neue", sans-serif;
+    }
     #map {
-      height: 100vh;
+      height: 100%;
       width: 100%;
+    }
+    .custom-popup {
+      padding: 6px 10px;
+      border-radius: 10px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+      background-color: #fff;
+      max-width: 180px;
+      word-break: break-word;
+    }
+    .custom-popup-title {
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .custom-popup-content {
+      font-size: 12px;
+      color: #444;
+      line-height: 1.4;
+      white-space: pre-line;
+    }
+    .search-box {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      background: white;
+      padding: 6px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .search-box input {
+      border: none;
+      outline: none;
+      font-size: 14px;
+      width: 180px;
+    }
+    @media (max-width: 600px) {
+      .search-box input {
+        width: 140px;
+        font-size: 13px;
+      }
+      .custom-popup-title {
+        font-size: 12px;
+      }
+      .custom-popup-content {
+        font-size: 11px;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="map"></div>
+<div id="map"></div>
+<div class="search-box">
+<input id="shopSearch" placeholder="🔍 搜尋商家名稱…" type="text"/>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script>
+const cuteIcon = L.icon({
+  iconUrl: 'icons/cute-icon.png',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -38]
+});
 
-  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-  <script>
+
     const map = L.map('map').setView([22.73, 120.33], 14);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -27,7 +91,6 @@
     }).addTo(map);
 
     const layer_吃_eat = L.layerGroup();const layer_喝drink = L.layerGroup();const layer_樂fun = L.layerGroup();const layer_用use = L.layerGroup();const layer_身med = L.layerGroup();
-
     const shopsData = {
   "type": "FeatureCollection",
   "features": [
@@ -774,37 +837,39 @@
       const props = feature.properties;
 
       const popupHtml = `
-        <div style='font-weight:bold; font-size:14px;'>${props.name}</div>
-        <div style='font-size:12px; color:gray; white-space:pre-line;'>${props.note}</div>
+        <div class='custom-popup'>
+          <div class='custom-popup-title'>${props.name}</div>
+          <div class='custom-popup-content'>${props.note}</div>
+        </div>
       `;
 
       
       if (props.emoji === '吃 🍽️') {
-        L.marker([coords[1], coords[0]])
+        L.marker([coords[1], coords[0]], { icon: cuteIcon })
           .bindPopup(popupHtml)
           .addTo(layer_吃_eat);
       }
     
       if (props.emoji === '喝🥤') {
-        L.marker([coords[1], coords[0]])
+        L.marker([coords[1], coords[0]], { icon: cuteIcon })
           .bindPopup(popupHtml)
           .addTo(layer_喝drink);
       }
     
       if (props.emoji === '樂😍') {
-        L.marker([coords[1], coords[0]])
+        L.marker([coords[1], coords[0]], { icon: cuteIcon })
           .bindPopup(popupHtml)
           .addTo(layer_樂fun);
       }
     
       if (props.emoji === '用🏍️') {
-        L.marker([coords[1], coords[0]])
+        L.marker([coords[1], coords[0]], { icon: cuteIcon })
           .bindPopup(popupHtml)
           .addTo(layer_用use);
       }
     
       if (props.emoji === '身🏥') {
-        L.marker([coords[1], coords[0]])
+        L.marker([coords[1], coords[0]], { icon: cuteIcon })
           .bindPopup(popupHtml)
           .addTo(layer_身med);
       }
@@ -821,17 +886,32 @@ layer_樂fun.addTo(map);
 layer_用use.addTo(map);
 layer_身med.addTo(map);
 
-    L.Control.geocoder({
-      defaultMarkGeocode: false,
-      placeholder: '搜尋地址或地點…',
-      geocoder: L.Control.Geocoder.nominatim()
-    })
-    .on('markgeocode', function(e) {
-      const bbox = e.geocode.bbox;
-      const bounds = L.latLngBounds(bbox);
-      map.fitBounds(bounds);
-    })
-    .addTo(map);
+    // 模糊搜尋功能
+    const shopNameDict = {"營養三明治": [120.3279742, 22.7274599], "早到晚到": [120.34276, 22.7321339], "LA CA SA吐司": [120.337078, 22.7398891], "順風雞排": [120.3246123, 22.7264558], "紅茶幫": [120.3244102, 22.7406932], "珍之味台日料": [120.327352, 22.7264227], "勁請享用": [120.326095, 22.7281765], "昌平炸雞王": [120.3444965, 22.7324451], "茶湯會": [120.3252287, 22.7268118], "德盛中醫診所": [120.3320558, 22.7289981], "愛線蚵仔麵線": [120.3206562, 22.6699341], "季德鹽酥雞": [120.337085, 22.7371113], "泡腳殿足體養生館": [120.3038066, 22.7261395], "京賀家便當": [120.33791, 22.741379], "旭勝湯包": [120.3317552, 22.7505774], "真好越南河粉": [120.3223221, 22.7295419], "幸福的鍋": [120.3321537, 22.729613], "桑桔Sunchi": [134.1720506, 34.3253204], "阿帕懷舊碳烤土司": [9.987170299999999, 53.5488282], "傻師傅大社店": [120.3475679, 22.7320556], "法院對麵": [120.3361614, 22.7307943], "弘爺漢堡": [120.3262352, 22.7289124], "季洋咖啡Mini Bar": [120.3248196, 22.7398396], "鮮茶道": [120.3123078, 22.7543302], "邱媽媽脆皮甜甜圈": [120.3121602, 22.7545494], "ㄚ倫美髮": [120.328784, 22.724472], "Wen美學": [120.3518581, 22.7298609], "沐泰 泰式餐盒": [120.3214214, 22.7285251], "艾美莉香水美妝行": [120.297905, 22.7242417], "阿明傳統美食": [120.3497609, 22.7316123], "陳港式蔥肉生煎包": [120.3119486, 22.7556141], "品饌現滷滷味": [120.3248811, 22.7246357], "熊好呷牛肉麵": [120.3248947, 22.72494], "燕巢媽媽甘草芭樂": [120.3114771, 22.7194775], "小丸町沖繩飯糰｜鍋燒專賣店": [120.3503718, 22.7314426], "黃金鹽水雞 後昌店": [120.3114771, 22.7194775], "食鄉蒸肉圓｜燒賣｜小籠包": [120.3114771, 22.7194775], "三生有性-大人玩具販售": [120.3050799, 22.7265837], "麥味登楠梓惠豐店": [120.316639, 22.7301106], "玩美時尚-療癒美學": [120.332317, 22.730287], "睫初美學": [120.3254498, 22.7283648], "孟蓁咖啡專賣店": [120.328359, 22.723734], "秘醬滷味楠梓店": [120.3262131, 22.72894], "萬佳車業": [120.3257692, 22.7274956], "紅茶老爹": [120.3245454, 22.7262362], "桂桃嬤飯麵洋行": [120.3288565, 22.7248171], "林桑滷味-後勁夜市": [120.3118504, 22.7202112], "好健舒食": [120.3252537, 22.7256584], "Oday自助洗衣-楠梓清豐店": [120.3317368, 22.7360876]};
+    const input = document.getElementById('shopSearch');
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const keyword = input.value.trim();
+        let found = false;
+
+        for (const name in shopNameDict) {
+          if (name.includes(keyword)) {
+            const [lng, lat] = shopNameDict[name];
+            map.setView([lat, lng], 17);
+            L.popup()
+              .setLatLng([lat, lng])
+              .setContent(`<div class='custom-popup'><div class='custom-popup-title'>${name}</div></div>`)
+              .openOn(map);
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          alert("找不到商家名稱：" + keyword);
+        }
+      }
+    });
   </script>
 </body>
 </html>
