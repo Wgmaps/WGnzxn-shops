@@ -126,21 +126,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          120.3252287,
-          22.7268118
-        ]
-      },
-      "properties": {
-        "name": "茶湯會",
-        "note": "全品項折5元",
-        "emoji": "喝🥤"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           120.3320558,
           22.7289981
         ]
